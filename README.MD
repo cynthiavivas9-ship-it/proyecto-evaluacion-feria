@@ -15,7 +15,7 @@ Este programa procesa datos estructurados de evaluaciones de equipos estudiantil
 proyecto_evaluacion/
 ├── README.md                    # Documentación del proyecto
 ├── src/                        # Código fuente
-│   ├── __init__.py             # Inicialización del paquete
+│          
 │   └── Funciones.py            # Funciones principales del sistema
 └── notebooks/                  # Notebooks de Jupyter
     └── Rondas.ipynb  # Notebook principal para ejecutar
@@ -84,4 +84,5 @@ notebooks/evaluacion_feria.ipynb: Notebook ejecutable con el análisis completo
 README.md: Documentación del proyecto
 
 resultado_final.txt: Archivo generado con resultados completos
+
 
