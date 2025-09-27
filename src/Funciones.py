@@ -25,7 +25,7 @@ def procesar_rondas(evaluaciones, puntos):
         for equipo, datos in ronda.items():
             puntaje, innovacion, presentacion, errores = puntos(datos)
             if equipo not in totales_acumulados:
-                totales_acumulados[equipo] = {"Innovacion":0, "Presentacion":0, "Errores":0, "Pu
+                totales_acumulados[equipo] = {"Innovacion":0, "Presentacion":0, "Errores":0, "Puntaje":0}
             if equipo not in puntos_ronda_ganada:
                 puntos_ronda_ganada[equipo] = 0
 
@@ -43,15 +43,17 @@ def procesar_rondas(evaluaciones, puntos):
             })
 
         max_puntaje = max(map(lambda p: p["Puntaje"], datos_tabla))
-        ganadores = list(map(lambda p: p["Equipo"], filter(lambda p: p["Puntaje"] == max_puntaje
+        ganadores = list(map(lambda p: p["Equipo"], filter(lambda p: p["Puntaje"] == max_puntaje, datos_tabla)))
         for g in ganadores:
             puntos_ronda_ganada[g] += 1
         for fila in datos_tabla:
             fila['Ganador'] = 1 if fila['Equipo'] in ganadores else 0
+           
+        # 🔹 Ordenar los equipos de la ronda por puntaje
+        datos_tabla = sorted(datos_tabla, key=lambda x: x["Puntaje"], reverse=True)
 
         rondas.append((nro, datos_tabla, ganadores, max_puntaje))
-        
-        nro += 1  # incrementamos el contador manual de ronda
+        nro += 1 #incrementamos  manual 
 
 
     datos_totales = []
@@ -65,42 +67,47 @@ def procesar_rondas(evaluaciones, puntos):
         "Rondas Ganadas": puntos_ronda_ganada.get(equi, 0)
     }
        datos_totales.append(fila)
+       #  Ordenar resultado final por nombre de equipo
+    datos_totales = sorted(datos_totales, key=lambda x: x["Equipo"])
     
-    datos_ordenados = sorted(datos_totales, key=lambda x: x["Puntaje"], reverse=True)
-    return rondas, datos_ordenados
+    return rondas, datos_totales
+    
+    
 
  #----------------------------------------IMPRIMIR LAS TABLAS-----------------------------------
 
-def imprimir_guardar_resultados(rondas, datos_ordenados):
-    with open("resultado_final.txt", "r") as f:
+def imprimir_guardar_resultados(rondas, datos_totales):
+    with open("resultado_final.txt", "w") as f:
         # --- Imprimir y guardar cada ronda ---
         for ronda_info in rondas:
             nro, datos_tabla, ganadores, max_puntaje = ronda_info
             print(f"\nRonda {nro} - Mejor equipo: {ganadores} ({max_puntaje} puntos)")
-            print(f"{'Equipo':<8} {'Innovacion':<11} {'Presentacion':<13} {'Errores':<7} {'Punta
+            print(f"{'Equipo':<8} {'Innovacion':<11} {'Presentacion':<13} {'Errores':<7} {'P
             print("-"*62)
             f.write(f"\nRonda {nro} - Mejor equipo: {ganadores} ({max_puntaje} puntos)\n")
-            f.write(f"{'Equipo':<8} {'Innovacion':<11} {'Presentacion':<13} {'Errores':<7} {'Pun
+            f.write(f"{'Equipo':<8} {'Innovacion':<11} {'Presentacion':<13} {'Errores':<7} {
             f.write("-"*62 + "\n")
 
             for fila in datos_tabla:
-                print(f"{fila['Equipo']:<8} {fila['Innovacion']:^11} {fila['Presentacion']:^13} 
+                print(f"{fila['Equipo']:<8} {fila['Innovacion']:^11} {fila['Presentacion']:^
                       f"{fila['Errores']:^7} {fila['Puntaje']:^7} {fila['Ganador']:^7}")
-                f.write(f"{fila['Equipo']:<8} {fila['Innovacion']:^11} {fila['Presentacion']:^13
+                f.write(f"{fila['Equipo']:<8} {fila['Innovacion']:^11} {fila['Presentacion']
                         f"{fila['Errores']:^7} {fila['Puntaje']:^7} {fila['Ganador']:^7}\n")
 
-        # --- RESULTADO FINAL ---
+        # ------- RESULTADO FINAL --------------
         print("\nRESULTADO FINAL")
         print(f"{'Pos':<4} {'Equipo':<8} {'Innovacion':<11} {'Presentacion':<13} "
               f"{'Errores':<7} {'Puntaje':<7} {'Rondas Ganadas':<14}")
         print("-"*75)
+        
+        
         f.write("\nRESULTADO FINAL\n")
         f.write(f"{'Pos':<4} {'Equipo':<8} {'Innovacion':<11} {'Presentacion':<13} "
                 f"{'Errores':<7} {'Puntaje':<7} {'Rondas Ganadas':<14}\n")
         f.write("-"*75 + "\n")
 
-        pos = 1 # incrementamos el contador manual
-        for fila in datos_ordenados:
+        pos = 1
+        for fila in datos_totales:
             print(f"{pos:<4} {fila['Equipo']:<8} {fila['Innovacion']:^11} "
                   f"{fila['Presentacion']:^13} {fila['Errores']:^7} "
                   f"{fila['Puntaje']:^7} {fila['Rondas Ganadas']:^14}")
@@ -108,6 +115,9 @@ def imprimir_guardar_resultados(rondas, datos_ordenados):
                     f"{fila['Presentacion']:^13} {fila['Errores']:^7} "
                     f"{fila['Puntaje']:^7} {fila['Rondas Ganadas']:^14}\n")
             pos += 1
+
+        print("Datos totales:", datos_totales)
+
 
 
 #-------------------------------------FIN---------------------------------------------------
